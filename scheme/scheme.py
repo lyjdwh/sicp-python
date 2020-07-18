@@ -76,6 +76,18 @@ def apply_primitive(procedure, args, env):
     4
     """
     "*** YOUR CODE HERE ***"
+    try:
+        primitives = []
+        while args is not nil:
+            primitives.append(scheme_eval(args.first, env))
+            args = args.second
+    except TypeError:
+        raise SchemeError("TypeError")
+
+    if procedure.use_env:
+        return procedure.fn(*primitives, env)
+    else:
+        return procedure.fn(*primitives)
 
 
 ################
