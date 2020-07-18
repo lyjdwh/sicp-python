@@ -14,6 +14,7 @@ in the course, such as quasiquoting and Scheme strings.
 import string
 import sys
 import tokenize
+import itertools
 
 from ucb import main
 

@@ -139,6 +139,7 @@ def scheme_read(src):
         return val
     elif val == "'":
         "*** YOUR CODE HERE ***"
+        return Pair("quote", Pair(scheme_read(src), nil))
     elif val == "(":
         return read_tail(src)
     else:
@@ -172,6 +173,18 @@ def read_tail(src):
             src.pop()
             return nil
         "*** YOUR CODE HERE ***"
+        if src.current() == ".":
+            src.pop()
+            a = src.current()
+            src.pop()
+            if a == "(":
+                return read_tail(src)
+            elif src.current() == ")":
+                src.pop()
+                return a
+            else:
+                raise SyntaxError("unexpected end of file")
+
         first = scheme_read(src)
         rest = read_tail(src)
         return Pair(first, rest)
