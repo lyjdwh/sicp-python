@@ -79,7 +79,7 @@ def apply_primitive(procedure, args, env):
     try:
         primitives = []
         while args is not nil:
-            primitives.append(scheme_eval(args.first, env))
+            primitives.append(args.first)
             args = args.second
     except TypeError:
         raise SchemeError("TypeError")
