@@ -49,7 +49,7 @@ class TimeoutError(Exception):
     pass
 
 
-TIMEOUT = 20
+TIMEOUT = 1000
 
 
 def test_eval(func, inputs, timeout=TIMEOUT, **kwargs):

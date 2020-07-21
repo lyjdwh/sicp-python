@@ -208,6 +208,12 @@ def do_lambda_form(vals, env):
     formals = vals[0]
     check_formals(formals)
     "*** YOUR CODE HERE ***"
+    length = len(vals)
+    if length > 2:
+        body = Pair("begin", vals.second)
+        return LambdaProcedure(formals, body, env)
+    else:
+        return LambdaProcedure(formals, vals[1], env)
 
 
 def do_mu_form(vals):
@@ -229,6 +235,15 @@ def do_define_form(vals, env):
         return target
     elif isinstance(target, Pair):
         "*** YOUR CODE HERE ***"
+        func = target.first
+        if scheme_symbolp(func):
+            formals = target.second
+            body = vals.second
+            la = Pair("lambda", Pair(formals, body))
+            env.define(func, scheme_eval(la, env))
+            return func
+        else:
+            raise SchemeError("function name must be symbol")
     else:
         raise SchemeError("bad argument to define")
 
@@ -315,6 +330,10 @@ def do_begin_form(vals, env):
     """Evaluate begin form with parameters VALS in environment ENV."""
     check_form(vals, 1)
     "*** YOUR CODE HERE ***"
+    length = len(vals)
+    for i in range(length - 1):
+        scheme_eval(vals[i], env)
+    return vals[length - 1]
 
 
 LOGIC_FORMS = {
