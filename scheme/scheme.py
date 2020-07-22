@@ -141,6 +141,12 @@ class Frame:
         """
         frame = Frame(self)
         "*** YOUR CODE HERE ***"
+        if len(formals) != len(vals):
+            raise SchemeError("arguments are too many or too few")
+        else:
+            bindings = dict(zip(formals, vals))
+            for sym, val in bindings.items():
+                frame.define(sym, val)
         return frame
 
     def define(self, sym, val):
@@ -284,11 +290,26 @@ def do_if_form(vals, env):
     """Evaluate if form with parameters VALS in environment ENV."""
     check_form(vals, 2, 3)
     "*** YOUR CODE HERE ***"
+    cond = scheme_true(vals[0])
+    if cond:
+        return vals[1]
+    elif len(vals) == 3:
+        return vals[2]
+    else:
+        return okay
 
 
 def do_and_form(vals, env):
     """Evaluate short-circuited and with parameters VALS in environment ENV."""
     "*** YOUR CODE HERE ***"
+    if vals is nil:
+        return True
+    else:
+        length = len(vals)
+        for i in range(length - 1):
+            if scheme_false(vals[i]):
+                return  False
+        return vals[length - 1]
 
 
 def quote(value):
@@ -306,6 +327,14 @@ def quote(value):
 def do_or_form(vals, env):
     """Evaluate short-circuited or with parameters VALS in environment ENV."""
     "*** YOUR CODE HERE ***"
+    if vals is nil:
+        return False
+    else:
+        length = len(vals)
+        for i in range(length - 1):
+            if scheme_true(vals[i]):
+                return vals[i]
+        return vals[length - 1]
 
 
 def do_cond_form(vals, env):
@@ -368,6 +397,13 @@ def check_formals(formals):
     >>> check_formals(read_line("(a b c)"))
     """
     "*** YOUR CODE HERE ***"
+    records = []
+    for formal in formals:
+        records.append(formal)
+        if not scheme_symbolp(formal):
+            raise SchemeError("not a well-formed list of symbols")
+    if len(formals) != len(set(records)):
+        raise SchemeError("symbol is repeated in list")
 
 
 ##################
