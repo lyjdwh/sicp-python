@@ -312,7 +312,7 @@ def do_if_form(vals, env):
     """Evaluate if form with parameters VALS in environment ENV."""
     check_form(vals, 2, 3)
     "*** YOUR CODE HERE ***"
-    cond = scheme_true(vals[0])
+    cond = scheme_true(scheme_eval(vals[0], env))
     if cond:
         return vals[1]
     elif len(vals) == 3:
