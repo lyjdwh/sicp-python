@@ -704,6 +704,7 @@ def scheme_eval(snippet):
             scheme.scheme_eval(expr, env)
         return scheme.scheme_eval(exprs[-1], env)
     except scheme.SchemeError as err:
+        print(err)
         return "SchemeError"
     except BaseException as err:
         return type(err).__name__ + " " + str(err)

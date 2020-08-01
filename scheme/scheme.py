@@ -60,8 +60,21 @@ def scheme_apply(procedure, args, env):
         return apply_primitive(procedure, args, env)
     elif isinstance(procedure, LambdaProcedure):
         "*** YOUR CODE HERE ***"
+
+        frame = procedure.env.make_call_frame(procedure.formals, args)
+        return scheme_eval(procedure.body, frame)
+
     elif isinstance(procedure, MuProcedure):
         "*** YOUR CODE HERE ***"
+        formals = procedure.formals
+        if len(formals) != len(args):
+            raise SchemeError("arguments are too many or too few")
+        else:
+            bindings = dict(zip(formals, args))
+            for sym, val in bindings.items():
+                env.define(sym, val)
+        return scheme_eval(procedure.body, env)
+
     else:
         raise SchemeError("Cannot call {0}".format(str(procedure)))
 
@@ -228,6 +241,12 @@ def do_mu_form(vals):
     formals = vals[0]
     check_formals(formals)
     "*** YOUR CODE HERE ***"
+    length = len(vals)
+    if length > 2:
+        body = Pair("begin", vals.second)
+        return MuProcedure(formals, body)
+    else:
+        return MuProcedure(formals, vals[1])
 
 
 def do_define_form(vals, env):
@@ -237,7 +256,7 @@ def do_define_form(vals, env):
     if scheme_symbolp(target):
         check_form(vals, 2, 2)
         "*** YOUR CODE HERE ***"
-        env.define(target,  scheme_eval(vals[1], env))
+        env.define(target, scheme_eval(vals[1], env))
         return target
     elif isinstance(target, Pair):
         "*** YOUR CODE HERE ***"
@@ -274,6 +293,9 @@ def do_let_form(vals, env):
     "*** YOUR CODE HERE ***"
     new_env = env.make_call_frame(names, values)
 
+    for binding in bindings:
+        new_env.define(binding.first, scheme_eval(binding[1], env))
+
     # Evaluate all but the last expression after bindings, and return the last
     last = len(exprs) - 1
     for i in range(0, last):
@@ -308,7 +330,7 @@ def do_and_form(vals, env):
         length = len(vals)
         for i in range(length - 1):
             if scheme_false(vals[i]):
-                return  False
+                return False
         return vals[length - 1]
 
 
@@ -352,6 +374,13 @@ def do_cond_form(vals, env):
             test = scheme_eval(clause.first, env)
         if scheme_true(test):
             "*** YOUR CODE HERE ***"
+            if test != True:
+                return clause.first
+            if len(clause.second) == 0:
+                return True
+            else:
+                return Pair("begin", clause.second)
+
     return okay
 
 
